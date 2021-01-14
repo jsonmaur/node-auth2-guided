@@ -11,6 +11,13 @@ function find() {
 		.select("u.id", "u.username", "r.name as role")
 }
 
+function findById(id) {
+	return db("users as u")
+		.innerJoin("roles as r", "r.id", "u.role_id")
+		.where("u.id", id)
+		.first("u.id", "u.username", "r.name as role")
+}
+
 function findByUsername(username) {
 	return db("users as u")
 		.innerJoin("roles as r", "r.id", "u.role_id")
@@ -21,5 +28,6 @@ function findByUsername(username) {
 module.exports = {
 	add,
 	find,
+	findById,
 	findByUsername,
 }

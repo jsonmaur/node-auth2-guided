@@ -11,9 +11,11 @@ _If you're looking for the old project for `Using Sessions and Cookies`, you can
 
 ## Project Setup
 
-- [ ] fork and clone this repository.
-- [ ] **CD into the folder** where you cloned **your fork**.
+- [ ] clone this repository.
+- [ ] move inside the project.
 - [ ] type`npm install` to download dependencies.
+- [ ] type `npx knex migrate:latest` to run the migrations.
+- [ ] type `npx knex seed:run` to seed the db.
 - [ ] type `npm run server` to start the API.
 
 Please follow along as the instructor adds support for `JSON Web Tokens (JWT)` to the API.
