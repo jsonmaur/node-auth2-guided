@@ -1,11 +1,12 @@
 const express = require("express")
 const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 const Users = require("./users-model")
 const { restrict } = require("./users-middleware")
 
 const router = express.Router()
 
-router.get("/users", restrict(), async (req, res, next) => {
+router.get("/users", restrict("admin"), async (req, res, next) => {
 	try {
 		res.json(await Users.find())
 	} catch(err) {
@@ -56,10 +57,14 @@ router.post("/login", async (req, res, next) => {
 			})
 		}
 
-		// generate a new session for this user,
-		// and sends back a session ID
-		req.session.user = user
+		const token = jwt.sign({
+			userId: user.id,
+			userRole: user.role,
+		}, process.env.JWT_SECRET)
 
+		// instruct the client to save a new cookie with this token
+		res.cookie("token", token)
+		
 		res.json({
 			message: `Welcome ${user.username}!`,
 		})
