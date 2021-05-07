@@ -1,15 +1,35 @@
-function restrict() {
+const jwt = require("jsonwebtoken")
+
+function restrict(role) {
+	const roleScale = ["basic", "admin"]
+
 	return async (req, res, next) => {
 		try {
-			// express-session will automatically get the session ID from the cookie
-			// header, and check to make sure it's valid and the session for this user exists.
-			if (!req.session || !req.session.user) {
+			const token = req.cookies.token
+			if (!token) {
 				return res.status(401).json({
 					message: "Invalid credentials",
 				})
 			}
 
-			next()
+			jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+				if (err) {
+					return res.status(401).json({
+						message: "Invalid credentials",
+					})
+				}
+
+				if (role && roleScale.indexOf(decoded.userRole) < roleScale.indexOf(role)) {
+					return res.status(403).json({
+						message: "You are not allowed here",
+					})
+				}
+
+				// make the token's payload available to other middleware functions
+				req.token = decoded
+
+				next()
+			})
 		} catch(err) {
 			next(err)
 		}
